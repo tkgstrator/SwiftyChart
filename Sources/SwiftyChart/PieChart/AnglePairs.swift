@@ -36,7 +36,6 @@ extension Array where Element == PieChartModel {
         for (value, color) in values {
             if !value.isZero {
                 let endAngle = startAngle + .degrees(360 * CGFloat(value) / CGFloat(totalValue))
-                let offsetAngle = CGFloat(((startAngle + endAngle) / 2).degrees / 180 * .pi)
                 angles.append(AnglePair(startAngle: startAngle, endAngle: endAngle, color: color))
                 startAngle = endAngle
             }
