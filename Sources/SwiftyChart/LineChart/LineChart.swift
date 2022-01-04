@@ -53,7 +53,7 @@ public struct LineChart: View {
                     isVisible = true
                 }
             })
-            .frame(height: 300)
+            .padding(.horizontal)
     }
 }
 

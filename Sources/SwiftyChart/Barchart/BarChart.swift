@@ -22,7 +22,6 @@ public struct BarChart: View {
             VStack(alignment: .leading, spacing: nil, content: {
                 ForEach(data) { data in
                     VStack(alignment: .leading, spacing: 0, content: {
-//                        PercentText(value: data.value, total: total)
                         HStack(alignment: .center, spacing: nil, content: {
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(data.color)
@@ -41,14 +40,16 @@ public struct BarChart: View {
                             .scaleEffect(CGSize(width: 1.0, height: scale), anchor: .bottom)
                             .animation(.spring())
                             .padding(.top)
+                            .onAppear(perform: {
+                                withAnimation(.easeInOut(duration: 1.0)) {
+                                    scale = 1.0
+                                }
+                            })
                     }
                 })
-                    .onAppear(perform: {
-                        scale = 1.0
-                    })
             })
-            
         })
+            .padding(.horizontal)
     }
 }
 

@@ -45,17 +45,15 @@ public struct PieChart: View {
                                     scale = 1.0
                                 }
                             })
-                            .onDisappear(perform: {
-                                withAnimation(.default) {
-                                    scale = 0.0
-                                }
-                            })
                     }
                     .overlay(Circle().strokeBorder(Color.originary, lineWidth: 5))
                     .overlay(Circle().fill(Color.originary).frame(width: geometry.size.width * 0.55, height: geometry.size.width * 0.55, alignment: .center))
                 })
             })
+            .aspectRatio(contentMode: .fit)
+            .frame(maxWidth: 180)
         })
+            .padding(.horizontal)
     }
 }
 
@@ -80,6 +78,6 @@ struct PieChart_Previews: PreviewProvider {
     ]
     static var previews: some View {
         PieChart(data: data)
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(.light)
     }
 }
