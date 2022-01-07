@@ -47,22 +47,7 @@ public struct RadarChart: View {
     }
     
     public var body: some View {
-        VStack(content: {
-            RadarView
-            LazyVGrid(columns: Array(repeating: .init(), count: 2), content: {
-                ForEach(dataSet) { data in
-                    HStack(content: {
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(data.color)
-                            .frame(width: 20, height: 20, alignment: .center)
-                        Text(data.caption)
-                            .bold()
-                            .foregroundColor(.secondary)
-                    })
-                }
-            })
-        })
-
+        RadarView
     }
 }
 
@@ -129,6 +114,9 @@ internal struct RadarChartGrid: Shape {
         let radius = min(rect.midX, rect.midY)
         let stride = radius / CGFloat(divisions)
         var path = Path()
+        if categories == 0 {
+            return path
+        }
         
         for category in 1 ... categories {
             path.move(to: CGPoint(x: rect.midX, y: rect.midY))
