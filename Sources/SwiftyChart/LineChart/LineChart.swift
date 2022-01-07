@@ -22,7 +22,7 @@ public struct LineChart: View {
     public var body: some View {
         ZStack(content: {
             VStack(content: {
-                GeometryReader(content:  { geometry in
+                GeometryReader(content: { geometry in
                     LineGrid()
                         .trim(to: isVisible ? 1 : 0)
                         .stroke(style: StrokeStyle(lineWidth: 1.5, lineCap: .square, dash: [10, 10, 10, 10]))

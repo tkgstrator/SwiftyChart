@@ -8,13 +8,18 @@
 import Foundation
 import SwiftUI
 
-public struct RadarChartModel: ChartModel {
-    public init(value: CGFloat, title: String) {
-        self.value = value
-        self.title = title
+public struct RadarChartSet {
+    public init(data: [CGFloat], caption: String, color: Color) {
+        self.data = data
+        self.caption = caption
+        self.color = color
     }
     
-    public var value: CGFloat
-    public var title: String
-    public var color: Color = .primary
+    public var data: [CGFloat]
+    public var caption: String
+    public var color: Color
+}
+
+extension RadarChartSet: Identifiable {
+    public var id: String { caption }
 }

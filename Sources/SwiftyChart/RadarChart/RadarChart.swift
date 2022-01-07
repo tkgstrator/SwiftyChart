@@ -8,61 +8,83 @@
 import SwiftUI
 
 public struct RadarChart: View {
-    @State var scale: CGFloat = .zero
-    let data: [RadarChartModel]
+    @State var scale: CGFloat = 0.0
+    let dataSet: [RadarChartSet]
+    let categories: Int
     let maxValue: CGFloat
     
-    public init(data: [RadarChartModel]) {
-        self.data = data
-        self.maxValue = data.map({ $0.value }).max() ?? .zero
+    public init(data dataSet: [RadarChartSet], maxValue: CGFloat = .zero) {
+        self.dataSet = dataSet
+        self.categories = dataSet.first?.data.count ?? .zero
+        self.maxValue = (dataSet.flatMap({ $0.data }) + [maxValue]).max() ?? .zero
+    }
+    
+    var RadarView: some View {
+        ZStack(content: {
+            RadarChartGrid(categories: categories, divisions: 5)
+                .fill(Color.red.opacity(0.5))
+                .aspectRatio(contentMode: .fit)
+            RadarChartGrid(categories: categories, divisions: 5)
+                .stroke(Color.primary, lineWidth: 3)
+                .aspectRatio(contentMode: .fit)
+            ForEach(dataSet.indices) { index in
+                RadarChartPath(data: dataSet[index].data, maxValue: maxValue)
+                    .stroke(dataSet[index].color, lineWidth: 3)
+                    .aspectRatio(contentMode: .fit)
+                RadarChartPath(data:dataSet[index].data, maxValue: maxValue)
+                    .fill(dataSet[index].color.opacity(0.7))
+                    .aspectRatio(contentMode: .fit)
+            }
+        })
+            .frame(maxWidth: 400)
+            .padding(.horizontal)
+            .scaleEffect(scale)
+            .onAppear(perform: {
+                withAnimation(.easeInOut) {
+                    scale = 1.0
+                }
+            })
     }
     
     public var body: some View {
-        ZStack(content: {
-            Group(content: {
-                RadarChartGrid(categories: data.count, divisions: 5)
-                    .fill(Color.red.opacity(0.3))
-                RadarChartGrid(categories: data.count, divisions: 5)
-                    .stroke(Color.primary, lineWidth: 3)
-                RadarChartPath(data: data.map({ $0.value }))
-                    .fill(.blue.opacity(0.8))
-                    .scaleEffect(scale)
-                RadarChartPath(data: data.map({ $0.value }))
-                    .stroke(.blue, lineWidth: 3)
-                    .scaleEffect(scale)
-                RadarChartLabel(labels: data.map({ $0.title }))
-                    .opacity(scale)
-                    .transition(.opacity)
+        VStack(content: {
+            RadarView
+            LazyVGrid(columns: Array(repeating: .init(), count: 2), content: {
+                ForEach(dataSet) { data in
+                    HStack(content: {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(data.color)
+                            .frame(width: 20, height: 20, alignment: .center)
+                        Text(data.caption)
+                            .bold()
+                            .foregroundColor(.secondary)
+                    })
+                }
             })
-                .padding(.horizontal)
-                .onAppear(perform: {
-                    withAnimation(.default) {
-                        scale = 1.0
-                    }
-                })
-                .onDisappear(perform: {
-                    withAnimation(.default) {
-                        scale = 0.0
-                    }
-                })
         })
+
     }
 }
 
 internal struct RadarChartLabel: View {
     let labels: [String]
-    
+
     var body: some View {
         GeometryReader(content: { geometry in
+            let midX: CGFloat = geometry.frame(in: .local).midX
+            let midY: CGFloat = geometry.frame(in: .local).midY
+            let count: CGFloat = CGFloat(labels.count)
+            let radius: CGFloat = min(midX, midY)
+            
             ForEach(labels.indices) { index in
                 Text(labels[index])
+                    .bold()
+                    .padding(.horizontal, 4)
                     .foregroundColor(Color.inverse)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
                     .background(Capsule().fill(Color.originary))
                     .position(
-                        x: geometry.frame(in: .local).midX + 0.9 * geometry.frame(in: .local).midX * sin(2 * .pi / CGFloat(labels.count) * CGFloat(index)),
-                        y: geometry.frame(in: .local).midY + 0.9 * geometry.frame(in: .local).midX * cos(2 * .pi / CGFloat(labels.count) * CGFloat(index))
+                        x: midX + radius * sin(2 * .pi * CGFloat(index) / count - .pi),
+                        y: midY + radius * cos(2 * .pi * CGFloat(index) / count - .pi)
                     )
             }
         })
@@ -71,27 +93,27 @@ internal struct RadarChartLabel: View {
 
 internal struct RadarChartPath: Shape {
     let data: [CGFloat]
+    let maxValue: CGFloat
     
     func path(in rect: CGRect) -> Path {
-        guard
-            3 <= data.count,
-            let minimum = data.min(),
-            0 <= minimum,
-            let maximum = data.max()
-        else { return Path() }
-        
-        let radius = min(rect.maxX - rect.midX, rect.maxY - rect.midY) * 0.8
+        let center = CGPoint(x: rect.width / 2, y: rect.height / 2)
+        let radius = min(center.x, center.y)
         var path = Path()
         
         for (index, entry) in data.enumerated() {
             switch index {
                 case 0:
-                    path.move(to: CGPoint(x: rect.midX + CGFloat(entry / maximum) * cos(CGFloat(index) * 2 * .pi / CGFloat(data.count) - .pi / 2) * radius,
-                                          y: rect.midY + CGFloat(entry / maximum) * sin(CGFloat(index) * 2 * .pi / CGFloat(data.count) - .pi / 2) * radius))
-                    
+                    let pt: CGPoint = CGPoint(
+                        x: center.x,
+                        y: center.y - (radius * entry / maxValue)
+                    )
+                    path.move(to: pt)
                 default:
-                    path.addLine(to: CGPoint(x: rect.midX + CGFloat(entry / maximum) * cos(CGFloat(index) * 2 * .pi / CGFloat(data.count) - .pi / 2) * radius,
-                                             y: rect.midY + CGFloat(entry / maximum) * sin(CGFloat(index) * 2 * .pi / CGFloat(data.count) - .pi / 2) * radius))
+                    let pt: CGPoint = CGPoint(
+                        x: center.x - (radius * entry / maxValue) * sin(CGFloat(index) / CGFloat(data.count) * 2 * .pi - .pi),
+                        y: center.y + (radius * entry / maxValue) * cos(CGFloat(index) / CGFloat(data.count) * 2 * .pi - .pi)
+                    )
+                    path.addLine(to: pt)
             }
         }
         path.closeSubpath()
@@ -104,7 +126,7 @@ internal struct RadarChartGrid: Shape {
     let divisions: Int
     
     func path(in rect: CGRect) -> Path {
-        let radius = min(rect.maxX - rect.midX, rect.maxY - rect.midY) * 0.8
+        let radius = min(rect.midX, rect.midY)
         let stride = radius / CGFloat(divisions)
         var path = Path()
         
@@ -113,7 +135,7 @@ internal struct RadarChartGrid: Shape {
             path.addLine(to: CGPoint(x: rect.midX + cos(CGFloat(category) * 2 * .pi / CGFloat(categories) - .pi / 2) * radius,
                                      y: rect.midY + sin(CGFloat(category) * 2 * .pi / CGFloat(categories) - .pi / 2) * radius))
         }
-        
+        //
         for step in 1 ... divisions {
             let rad = CGFloat(step) * stride
             path.move(to: CGPoint(x: rect.midX + cos(-.pi / 2) * rad,
@@ -123,6 +145,7 @@ internal struct RadarChartGrid: Shape {
                 path.addLine(to: CGPoint(x: rect.midX + cos(CGFloat(category) * 2 * .pi / CGFloat(categories) - .pi / 2) * rad,
                                          y: rect.midY + sin(CGFloat(category) * 2 * .pi / CGFloat(categories) - .pi / 2) * rad))
             }
+            path.closeSubpath()
         }
         
         return path
@@ -130,17 +153,11 @@ internal struct RadarChartGrid: Shape {
 }
 
 struct RadarChart_Previews: PreviewProvider {
-    static var data: [RadarChartModel] = [
-        RadarChartModel(value: 90, title: "tkgling"),
-        RadarChartModel(value: 95, title: "tkgling"),
-        RadarChartModel(value: 100, title: "tkgling"),
-        RadarChartModel(value: 85, title: "tkgling"),
-        RadarChartModel(value: 80, title: "tkgling"),
-        RadarChartModel(value: 95, title: "tkgling"),
-        RadarChartModel(value: 75, title: "tkgling"),
-        RadarChartModel(value: 65, title: "tkgling")
-    ]
     static var previews: some View {
-        RadarChart(data: data)
+        ScrollView(content: {
+            RadarChart(data: [RadarChartSet(data: [20, 30, 40, 50, 40], caption: "Player", color: .blue)])
+                .preferredColorScheme(.dark)
+        })
+            .preferredColorScheme(.light)
     }
 }

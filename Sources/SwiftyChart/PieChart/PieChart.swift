@@ -77,7 +77,10 @@ struct PieChart_Previews: PreviewProvider {
         PieChartModel(value: 40, color: .yellow, title: "seimitsudx-kun"),
     ]
     static var previews: some View {
-        PieChart(data: data)
-            .preferredColorScheme(.light)
+        ScrollView(content: {
+            PieChart(data: data)
+                .preferredColorScheme(.light)
+            
+        })
     }
 }
