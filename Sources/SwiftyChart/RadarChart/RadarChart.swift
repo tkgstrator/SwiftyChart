@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct RadarChart: View {
-    @State var scale: CGFloat = 0.0
+    @State var scale: CGFloat = .zero
     let dataSet: [RadarChartSet]
     let categories: Int
     let maxValue: CGFloat
