@@ -9,12 +9,12 @@ import Foundation
 import SwiftUI
 
 public struct LineChartModel: ChartModel {
-    public init(value: CGFloat, title: String) {
+    public init(value: Float, title: String) {
         self.value = value
         self.title = title
     }
 
-    public let value: CGFloat
+    public let value: Float
     public let color: Color = .primary
     public let title: String
 }

@@ -10,7 +10,7 @@ import SwiftUI
 public struct BarChart: View {
     @State var scale: CGFloat = .zero
     let data: [BarChartModel]
-    let maxValue: CGFloat
+    let maxValue: Float
     
     public init(data: [BarChartModel]) {
         self.data = data
@@ -58,8 +58,8 @@ private struct BarChartCell: View {
     let value: CGFloat
     let color: Color
     
-    init(data: BarChartModel, maxValue: CGFloat) {
-        self.value = data.value / maxValue
+    init(data: BarChartModel, maxValue: Float) {
+        self.value = CGFloat(data.value) /  CGFloat(maxValue)
         self.color = data.color
     }
     

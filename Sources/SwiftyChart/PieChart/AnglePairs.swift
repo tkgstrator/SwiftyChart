@@ -28,8 +28,8 @@ extension AnglePair: Identifiable {
 
 extension Array where Element == PieChartModel {
     var anglePairs: [AnglePair] {
-        let totalValue: CGFloat = self.map({ $0.value }).reduce(.zero, +)
-        let values: [(CGFloat, Color)] = self.map({ ($0.value, $0.color) })
+        let totalValue: Float = self.map({ $0.value }).reduce(.zero, +)
+        let values: [(Float, Color)] = self.map({ ($0.value, $0.color) })
         var startAngle: Angle = .degrees(-90)
         var angles: [AnglePair] = []
         

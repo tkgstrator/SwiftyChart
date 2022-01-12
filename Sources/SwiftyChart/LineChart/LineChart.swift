@@ -69,19 +69,19 @@ struct LineGrid: Shape {
 }
 
 struct LineCurve: Shape {
-    var data: [CGFloat]
+    var data: [Float]
     
     func path(in rect: CGRect) -> Path {
-        let maxValue = data.max() ?? .zero
+        let maxValue = CGFloat(data.max() ?? .zero)
         let step = rect.width / (CGFloat(data.count) - 1)
         var path = Path()
         
-        var p1: CGPoint = CGPoint(x: .zero, y: data[0] * rect.height / maxValue)
+        var p1: CGPoint = CGPoint(x: .zero, y: CGFloat(data[0]) * rect.height / maxValue)
         
         // First Point
         path.move(to: p1)
         for index in 1..<data.count {
-            let pt: CGPoint = CGPoint(x: CGFloat(index) * step, y: data[index] * rect.height / maxValue)
+            let pt: CGPoint = CGPoint(x: CGFloat(index) * step, y: CGFloat(data[index]) * rect.height / maxValue)
             let mid: CGPoint = midPoint(for: (p1, pt))
             path.addQuadCurve(to: mid, control: controlPoint(for: (mid, p1)))
             path.addQuadCurve(to: pt, control: controlPoint(for: (mid, pt)))
@@ -126,9 +126,9 @@ struct Line: Shape {
 
 struct LineChart_Previews: PreviewProvider {
     static var data: [LineChartModelSet] = [
-        LineChartModelSet(data: (0...20).map({ _ in LineChartModel(value: CGFloat.random(in: 0..<1), title: "entei-kun") }), title: "entei-kun", color: .red),
-        LineChartModelSet(data: (0...20).map({ _ in LineChartModel(value: CGFloat.random(in: 0..<1), title: "fistia-kun") }), title: "fistia-kun", color: .blue),
-        LineChartModelSet(data: (0...20).map({ _ in LineChartModel(value: CGFloat.random(in: 0..<1), title: "soltia-kun") }), title: "soltia-kun", color: .green)
+        LineChartModelSet(data: (0...20).map({ _ in LineChartModel(value: Float.random(in: 0..<1), title: "entei-kun") }), title: "entei-kun", color: .red),
+        LineChartModelSet(data: (0...20).map({ _ in LineChartModel(value: Float.random(in: 0..<1), title: "fistia-kun") }), title: "fistia-kun", color: .blue),
+        LineChartModelSet(data: (0...20).map({ _ in LineChartModel(value: Float.random(in: 0..<1), title: "soltia-kun") }), title: "soltia-kun", color: .green)
     ]
     static var previews: some View {
         LineChart(data: data)

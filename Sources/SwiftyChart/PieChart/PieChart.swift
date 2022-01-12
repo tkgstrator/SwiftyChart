@@ -9,12 +9,12 @@ import SwiftUI
 
 public struct PieChart: View {
     @State var scale: CGFloat = .zero
-    let total: CGFloat
+    let total: Float
     let data: [PieChartModel]
     
     public init(data: [PieChartModel]) {
         self.data = data
-        self.total = data.map({ $0.value }).reduce(.zero, +)
+        self.total = Float(data.map({ $0.value }).reduce(.zero, +))
     }
     
     public var body: some View {
@@ -58,8 +58,8 @@ public struct PieChart: View {
 }
 
 private struct PercentText: View {
-    let value: CGFloat
-    let total: CGFloat
+    let value: Float
+    let total: Float
     
     var body: some View {
         Text(String(format: "%.02f%%", 100 * value / total))

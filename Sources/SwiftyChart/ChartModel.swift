@@ -10,7 +10,7 @@ import SwiftUI
 
 public protocol ChartModel: Identifiable {
     var id: UUID { get }
-    var value: CGFloat { get }
+    var value: Float { get }
     var title: String { get }
     var color: Color { get }
 }

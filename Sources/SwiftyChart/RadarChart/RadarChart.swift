@@ -13,10 +13,10 @@ public struct RadarChart: View {
     let categories: Int
     let maxValue: CGFloat
     
-    public init(data dataSet: [RadarChartSet], maxValue: CGFloat = .zero) {
+    public init(data dataSet: [RadarChartSet], maxValue: Float = .zero) {
         self.dataSet = dataSet
         self.categories = dataSet.first?.data.count ?? .zero
-        self.maxValue = (dataSet.flatMap({ $0.data }) + [maxValue]).max() ?? .zero
+        self.maxValue = CGFloat((dataSet.flatMap({ $0.data }) + [maxValue]).max() ?? .zero)
     }
     
     var RadarView: some View {
@@ -77,7 +77,7 @@ internal struct RadarChartLabel: View {
 }
 
 internal struct RadarChartPath: Shape {
-    let data: [CGFloat]
+    let data: [Float]
     let maxValue: CGFloat
     
     func path(in rect: CGRect) -> Path {
@@ -90,13 +90,13 @@ internal struct RadarChartPath: Shape {
                 case 0:
                     let pt: CGPoint = CGPoint(
                         x: center.x,
-                        y: center.y - (radius * entry / maxValue)
+                        y: center.y - (radius * CGFloat(entry) / maxValue)
                     )
                     path.move(to: pt)
                 default:
                     let pt: CGPoint = CGPoint(
-                        x: center.x - (radius * entry / maxValue) * sin(CGFloat(index) / CGFloat(data.count) * 2 * .pi - .pi),
-                        y: center.y + (radius * entry / maxValue) * cos(CGFloat(index) / CGFloat(data.count) * 2 * .pi - .pi)
+                        x: center.x - (radius * CGFloat(entry) / maxValue) * sin(CGFloat(index) / CGFloat(data.count) * 2 * .pi - .pi),
+                        y: center.y + (radius * CGFloat(entry) / maxValue) * cos(CGFloat(index) / CGFloat(data.count) * 2 * .pi - .pi)
                     )
                     path.addLine(to: pt)
             }

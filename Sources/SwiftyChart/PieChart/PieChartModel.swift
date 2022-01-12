@@ -9,13 +9,13 @@ import Foundation
 import SwiftUI
 
 public struct PieChartModel: ChartModel {
-    public init(value: CGFloat, color: Color, title: String) {
+    public init(value: Float, color: Color, title: String) {
         self.value = value
         self.color = color
         self.title = title
     }
 
-    public let value: CGFloat
+    public let value: Float
     public let color: Color
     public let title: String
 }

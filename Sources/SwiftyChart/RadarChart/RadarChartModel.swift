@@ -9,13 +9,13 @@ import Foundation
 import SwiftUI
 
 public struct RadarChartSet {
-    public init(data: [CGFloat], caption: String, color: Color) {
+    public init(data: [Float], caption: String, color: Color) {
         self.data = data
         self.caption = caption
         self.color = color
     }
     
-    public var data: [CGFloat]
+    public var data: [Float]
     public var caption: String
     public var color: Color
 }
