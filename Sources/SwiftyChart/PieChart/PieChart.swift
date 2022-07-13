@@ -41,28 +41,28 @@ public struct PieChart: View {
                             .fill(anglePair.color)
                             .scaleEffect(scale)
                             .onAppear(perform: {
-                                withAnimation(.easeInOut(duration: 1.0)) {
+                                withAnimation(.easeIn(duration: 1.0)) {
                                     scale = 1.0
                                 }
                             })
                     }
-                    .overlay(Circle().strokeBorder(Color.originary, lineWidth: 5))
-                    .overlay(Circle().fill(Color.originary).frame(width: geometry.size.width * 0.55, height: geometry.size.width * 0.55, alignment: .center))
+                    Circle().fill(Color.originary).frame(width: geometry.size.width * 0.55, height: geometry.size.width * 0.55, alignment: .center)
+                    Circle().strokeBorder(Color.originary, lineWidth: 3)
                 })
             })
             .aspectRatio(contentMode: .fit)
-            .frame(maxWidth: 180)
+            .frame(maxWidth: 160)
         })
             .padding(.horizontal)
     }
 }
 
-private struct PercentText: View {
+public struct PercentText: View {
     let value: Float
     let total: Float
     
-    var body: some View {
-        Text(String(format: "%.02f%%", 100 * value / total))
+    public var body: some View {
+        Text(String(format: "%05.2f%%", 100 * value / total))
             .font(Font.system(.caption, design: .monospaced))
             .bold()
             .foregroundColor(Color.secondary)
@@ -71,8 +71,8 @@ private struct PercentText: View {
 
 struct PieChart_Previews: PreviewProvider {
     static let data: [PieChartModel] = [
-        PieChartModel(value: 10, color: .orange, title: "fistia-kun"),
-        PieChartModel(value: 20, color: .red, title: "entei-kun"),
+        PieChartModel(value: 5, color: .orange, title: "fistia-kun"),
+        PieChartModel(value: 10, color: .red, title: "entei-kun"),
         PieChartModel(value: 30, color: .blue, title: "seimitsuai-kun"),
         PieChartModel(value: 40, color: .yellow, title: "seimitsudx-kun"),
     ]
